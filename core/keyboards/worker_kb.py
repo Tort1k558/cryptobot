@@ -4,35 +4,36 @@ from aiogram.filters.callback_data import CallbackData
 
 from core.keyboards.main_menu_kb import MenuCallback
 from core.utils.sqlite_db import User
+from core.utils.translations import get_translate
 
 
-def get_worker_kb():
+def get_worker_kb(language):
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text="Список мамонтов",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_list_mammoths", language),
                                      callback_data=MenuCallback(menu_name="worker", action="users_list").pack()))
     builder.row(
-        InlineKeyboardButton(text="Рассылка",
+        InlineKeyboardButton(text=get_translate("btn_worker_mailing", language),
                              callback_data=MenuCallback(menu_name="worker", action="mailing").pack()))
-    builder.row(InlineKeyboardButton(text="Привязать мамонта",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_assign_mammoth", language),
                                      callback_data=MenuCallback(menu_name="worker",
                                                                 action="assign_mammoth").pack()))
-    builder.row(InlineKeyboardButton(text="Мин. пополнение всем",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_min_deposit", language),
                                      callback_data=MenuCallback(menu_name="worker",
                                                                 action="min_deposit").pack()))
-    builder.row(InlineKeyboardButton(text="Мин. вывод всем",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_min_withdraw", language),
                                      callback_data=MenuCallback(menu_name="worker",
                                                                 action="min_withdraw").pack()))
     builder.row(
-        InlineKeyboardButton(text="Промокод",
+        InlineKeyboardButton(text=get_translate("btn_worker_promo", language),
                              callback_data=MenuCallback(menu_name="worker", action="promo").pack()))
-    builder.row(InlineKeyboardButton(text="Задать валюту",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_set_currency", language),
                                      callback_data=MenuCallback(menu_name="worker",
                                                                 action="select_currency").pack()))
-    builder.row(InlineKeyboardButton(text="Личный линк",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_private_link", language),
                                      callback_data=MenuCallback(menu_name="worker",
                                                                 action="private_link").pack()))
-    builder.row(InlineKeyboardButton(text="Удалить всех мамонтов",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_delete_mammoths", language),
                                      callback_data=MenuCallback(menu_name="worker",
                                                                 action="delete_all_mammoths").pack()))
 
@@ -48,10 +49,10 @@ class MammothsPageCallback(CallbackData, prefix='mammoth_pages'):
     current: int
 
 
-def get_users_kb(mammoths, current):
+def get_users_kb(mammoths, current, language):
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text="Поиск",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_find", language),
                                      callback_data=MenuCallback(menu_name="worker_mammoths",
                                                                 action="find").pack()))
 
@@ -84,12 +85,12 @@ def get_worker_back_kb():
     return builder.as_markup()
 
 
-def get_promo_kb():
+def get_promo_kb(language):
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text="Новый промокод",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_new_promo", language),
                                      callback_data=MenuCallback(menu_name="worker_promo", action="new").pack()),
-                InlineKeyboardButton(text="Список промокодов",
+                InlineKeyboardButton(text=get_translate("btn_worker_list_promo", language),
                                      callback_data=MenuCallback(menu_name="worker_promo", action="list").pack()))
     builder.row(
         InlineKeyboardButton(text="<-", callback_data=MenuCallback(menu_name="worker", action="menu").pack()))
@@ -124,11 +125,11 @@ def get_currencies_kb():
     return builder.as_markup()
 
 
-def get_delete_users_kb():
+def get_delete_users_kb(language):
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text="Удалить", callback_data=MenuCallback(menu_name="mammoths_delete",
-                                                                                action="").pack()))
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoths_delete", language),
+                                     callback_data=MenuCallback(menu_name="mammoths_delete", action="").pack()))
     builder.row(
         InlineKeyboardButton(text="<-", callback_data=MenuCallback(menu_name="worker", action="menu").pack()))
 
@@ -151,80 +152,83 @@ def get_worker_promo_list_kb(promocodes):
 
 def get_promo_info_kb(code):
     builder = InlineKeyboardBuilder()
-    builder.row(InlineKeyboardButton(text="Удалить", callback_data=MenuCallback(menu_name="promo_delete",
-                                                                                action=code).pack()))
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_promo_delete", language),
+                                     callback_data=MenuCallback(menu_name="promo_delete", action=code).pack()))
     builder.row(
         InlineKeyboardButton(text="<-", callback_data=MenuCallback(menu_name="worker", action="menu").pack()))
 
     return builder.as_markup()
 
 
-def get_mammoth_kb(mammoth: User):
+def get_mammoth_kb(mammoth: User, language):
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Обновить", callback_data=MammothActionCallback(id=mammoth.id, action="info").pack()))
-    builder.row(InlineKeyboardButton(text="Выигрыш",
+        InlineKeyboardButton(text=get_translate("btn_worker_mammoth_refresh", language),
+                             callback_data=MammothActionCallback(id=mammoth.id, action="info").pack()))
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_win", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="marketplace_strategy_win").pack()),
-                InlineKeyboardButton(text="Проигрыш",
+                InlineKeyboardButton(text=get_translate("btn_worker_mammoth_loss", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="marketplace_strategy_loss").pack()),
-                InlineKeyboardButton(text="Рандом",
+                InlineKeyboardButton(text=get_translate("btn_worker_mammoth_random", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="marketplace_strategy_random").pack()),
-                InlineKeyboardButton(text="Реальность",
+                InlineKeyboardButton(text=get_translate("btn_worker_mammoth_real", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="marketplace_strategy_real").pack()
                                      ))
     if mammoth.verification:
-        builder.row(InlineKeyboardButton(text="Забрать верификацию", callback_data=MammothActionCallback(id=mammoth.id,
-                                                                                                         action="verification_0").pack()))
+        builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_retrieve_verification", language),
+                                         callback_data=MammothActionCallback(id=mammoth.id,
+                                                                             action="verification_0").pack()))
     else:
-        builder.row(InlineKeyboardButton(text="Выдать верификацию", callback_data=MammothActionCallback(id=mammoth.id,
-                                                                                                        action="verification_1").pack()))
+        builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_give_verification", language),
+                                         callback_data=MammothActionCallback(id=mammoth.id,
+                                                                             action="verification_1").pack()))
     btn_marketplace_status = None
     if mammoth.marketplace_status:
-        btn_marketplace_status = InlineKeyboardButton(text="Блокировать торги",
-                                                      callback_data=MammothActionCallback(id=mammoth.id,
-                                                                                          action="marketplace_status_0").pack())
+        btn_marketplace_status = InlineKeyboardButton(
+            text=get_translate("btn_worker_mammoth_block_marketplace", language),
+            callback_data=MammothActionCallback(id=mammoth.id,
+                                                action="marketplace_status_0").pack())
     else:
-        btn_marketplace_status = InlineKeyboardButton(text="Разблокировать торги",
-                                                      callback_data=MammothActionCallback(id=mammoth.id,
-                                                                                          action="marketplace_status_1").pack())
+        btn_marketplace_status = InlineKeyboardButton(
+            text=get_translate("btn_worker_mammoth_unblock_marketplace", language),
+            callback_data=MammothActionCallback(id=mammoth.id,
+                                                action="marketplace_status_1").pack())
     btn_withdraw_status = None
     if mammoth.withdraw_status:
-        btn_withdraw_status = InlineKeyboardButton(text="Блокировать вывод",
+        btn_withdraw_status = InlineKeyboardButton(text=get_translate("btn_worker_mammoth_block_withdraw", language),
                                                    callback_data=MammothActionCallback(id=mammoth.id,
                                                                                        action="withdraw_status_0").pack())
     else:
-        btn_withdraw_status = InlineKeyboardButton(text="Разблокировать вывод",
+        btn_withdraw_status = InlineKeyboardButton(text=get_translate("btn_worker_mammoth_unblock_withdraw", language),
                                                    callback_data=MammothActionCallback(id=mammoth.id,
                                                                                        action="withdraw_status_1").pack())
     builder.row(btn_marketplace_status, btn_withdraw_status)
-    builder.row(InlineKeyboardButton(text="Изменить баланс",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_change_balance", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="change_balance").pack()),
-                InlineKeyboardButton(text="Добавить к балансу",
-                                     callback_data=MammothActionCallback(id=mammoth.id,
-                                                                         action="add_balance").pack()))
-    builder.row(InlineKeyboardButton(text="Написать",
-                                     callback_data=MammothActionCallback(id=mammoth.id,
-                                                                         action="mail").pack()))
-    builder.row(InlineKeyboardButton(text="Мин. Вывод",
+                InlineKeyboardButton(text=get_translate("btn_worker_mammoth_add_balance", language),
+                                     callback_data=MammothActionCallback(id=mammoth.id, action="add_balance").pack()))
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_mail", language),
+                                     callback_data=MammothActionCallback(id=mammoth.id, action="mail").pack()))
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_min_withdraw", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="set_min_withdraw").pack()),
-                InlineKeyboardButton(text="Мин. Пополнение",
+                InlineKeyboardButton(text=get_translate("btn_worker_mammoth_min_deposit", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="set_min_deposit").pack()))
-    builder.row(InlineKeyboardButton(text="Удалить",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_delete", language),
                                      callback_data=MammothActionCallback(id=mammoth.id,
                                                                          action="delete").pack()))
     if mammoth.blocked:
-        builder.row(InlineKeyboardButton(text="Разблокировать",
+        builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_unblock", language),
                                          callback_data=MammothActionCallback(id=mammoth.id,
                                                                              action="unblock").pack()))
     else:
-        builder.row(InlineKeyboardButton(text="Заблокировать",
+        builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoth_block", language),
                                          callback_data=MammothActionCallback(id=mammoth.id,
                                                                              action="block").pack()))
     builder.row(
@@ -239,8 +243,8 @@ def get_mammoth_back_kb(id):
     return builder.as_markup()
 
 
-def get_control_mammoth_kb(mammoth_id):
+def get_control_mammoth_kb(mammoth_id, language):
     builder = InlineKeyboardBuilder()
-    builder.row(InlineKeyboardButton(text="Управление мамонтом",
+    builder.row(InlineKeyboardButton(text=get_translate("btn_worker_mammoths_control", language),
                                      callback_data=MammothActionCallback(id=mammoth_id, action="info").pack()))
     return builder.as_markup()

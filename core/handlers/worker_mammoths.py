@@ -41,7 +41,8 @@ async def callback_mammoth_pages(callback: CallbackQuery, callback_data: Mammoth
 
     caption = get_translate("all_mammoths", worker.language).format(count=len(mammoths))
     try:
-        await callback.message.edit_text(caption, reply_markup=get_users_kb(mammoths, callback_data.current))
+        await callback.message.edit_text(caption,
+                                         reply_markup=get_users_kb(mammoths, callback_data.current, worker.language))
     except:
         pass
 
@@ -55,7 +56,6 @@ async def callback_worker_mammoths(callback: CallbackQuery, callback_data: MenuC
 
 
 async def get_mammoth_info(mammoth: User, language: str) -> str:
-
     cursor.execute(f"SELECT amount,profit,asset,duration from transactions WHERE id = "
                    f"(SELECT MAX(id) FROM transactions WHERE user_id = {mammoth.id})")
     last_transaction_info = cursor.fetchone()
@@ -74,7 +74,8 @@ async def get_mammoth_info(mammoth: User, language: str) -> str:
                                                              balance=mammoth.balance,
                                                              on_withdraw=mammoth.on_withdraw,
                                                              referrer=mammoth.referrer,
-                                                             min_deposit=mammoth.min_deposit, min_withdraw=mammoth.min_withdraw,
+                                                             min_deposit=mammoth.min_deposit,
+                                                             min_withdraw=mammoth.min_withdraw,
                                                              verification="✅" if mammoth.verification else "❌",
                                                              last_transcation=last_transaction,
                                                              marketplace_status="✅" if mammoth.marketplace_status else "❌",
@@ -84,17 +85,16 @@ async def get_mammoth_info(mammoth: User, language: str) -> str:
 
 
 async def find_mammoth_by_id(msg: Message, state: FSMContext):
-    cursor.execute(f"SELECT language FROM users WHERE id = {msg.from_user.id}")
-    language = cursor.fetchone()[0]
+    worker = User.get_user(msg.from_user.id)
     try:
         mammoth_id = int(msg.text)
         mammoth = User.get_user(mammoth_id)
-        caption = await get_mammoth_info(mammoth, language)
+        caption = await get_mammoth_info(mammoth, worker.language)
 
-        await msg.answer(caption, reply_markup=get_mammoth_kb(mammoth))
+        await msg.answer(caption, reply_markup=get_mammoth_kb(mammoth, worker.language))
         await state.clear()
     except ValueError:
-        caption = get_translate("mammoth_not_found", language)
+        caption = get_translate("mammoth_not_found", worker.language)
         await msg.answer(caption, reply_markup=get_worker_back_kb())
     except Exception as e:
         await msg.answer(str(e), reply_markup=get_worker_back_kb())
@@ -108,7 +108,7 @@ async def callback_mammoth_info(callback: CallbackQuery, callback_data: MammothA
 
         caption = await get_mammoth_info(mammoth, worker.language)
         try:
-            await callback.message.edit_text(caption, reply_markup=get_mammoth_kb(mammoth))
+            await callback.message.edit_text(caption, reply_markup=get_mammoth_kb(mammoth, worker.language))
         except:
             pass
 

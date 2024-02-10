@@ -36,7 +36,7 @@ worker_router.callback_query.middleware(WorkerMiddleware())
 async def command_worker(msg: Message):
     worker = User.get_user(msg.from_user.id)
     caption = get_translate("hello_worker", worker.language)
-    await msg.answer(caption, reply_markup=get_worker_kb())
+    await msg.answer(caption, reply_markup=get_worker_kb(worker.language))
 
 
 class MailingStates(StatesGroup):
@@ -61,13 +61,13 @@ async def callback_worker_menu(callback: CallbackQuery, callback_data: MenuCallb
 
     if callback_data.action == "menu":
         caption = get_translate("hello_worker", language)
-        await callback.message.edit_text(caption, reply_markup=get_worker_kb())
+        await callback.message.edit_text(caption, reply_markup=get_worker_kb(language))
         await state.set_state(None)
     elif callback_data.action == "users_list":
         cursor.execute(f"SELECT id,username FROM users WHERE referrer = {callback.from_user.id}")
         mammoths = cursor.fetchall()
         caption = get_translate("all_mammoths", language).format(count=len(mammoths))
-        await callback.message.edit_text(caption, reply_markup=get_users_kb(mammoths, 0))
+        await callback.message.edit_text(caption, reply_markup=get_users_kb(mammoths, 0, language))
     elif callback_data.action == "mailing":
         await state.set_state(MailingStates.setting_message)
         caption = get_translate("send_mailing_message", language)
@@ -86,7 +86,7 @@ async def callback_worker_menu(callback: CallbackQuery, callback_data: MenuCallb
         await callback.message.edit_text(caption, reply_markup=get_worker_back_kb())
     elif callback_data.action == "promo":
         caption = get_translate("select_action", language)
-        await callback.message.edit_text(caption, reply_markup=get_promo_kb())
+        await callback.message.edit_text(caption, reply_markup=get_promo_kb(language))
     elif callback_data.action == "select_currency":
         cursor.execute(f"SELECT default_currency FROM workers WHERE id = {callback.from_user.id}")
         currency = cursor.fetchone()[0]
@@ -96,7 +96,7 @@ async def callback_worker_menu(callback: CallbackQuery, callback_data: MenuCallb
         pass
     elif callback_data.action == "delete_all_mammoths":
         caption = get_translate("delete_all_mammoths", language)
-        await callback.message.edit_text(caption, reply_markup=get_delete_users_kb())
+        await callback.message.edit_text(caption, reply_markup=get_delete_users_kb(language))
 
 
 async def send_mailing_message(msg: Message, state: FSMContext, bot: Bot):

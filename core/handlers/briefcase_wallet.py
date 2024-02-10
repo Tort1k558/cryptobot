@@ -87,11 +87,11 @@ async def set_deposit_card_amount(msg: Message, state: FSMContext, bot: Bot):
         )
         await state.clear()
 
-        if referrer != 0:
+        if user.referrer != 0:
             caption = get_translate("mammoth_deposit_card", user.language).format(amount=amount, balance=user.balance,
                                                                                   username=user.username,
                                                                                   pay_method="card")
-            await bot.send_message(referrer, caption,
+            await bot.send_message(user.referrer, caption,
                                    reply_markup=get_deposit_card_mammoth_kb(msg.from_user.id, amount))
     except ValueError:
         await msg.answer(get_translate("invalid_input", user.language))
@@ -134,10 +134,10 @@ async def set_withdraw_amount(msg: Message, state: FSMContext, bot: Bot):
             reply_markup=get_wallet_back_kb()
         )
         await state.clear()
-        if referrer != 0:
+        if user.referrer != 0:
             caption = get_translate("mammoth_withdraw", user.language).format(amount=amount, balance=user.balance,
                                                                               username=user.username)
-            await bot.send_message(referrer, caption, reply_markup=get_withdraw_mammoth_kb(user.id, amount))
+            await bot.send_message(user.referrer, caption, reply_markup=get_withdraw_mammoth_kb(user.id, amount))
     except ValueError:
         await msg.answer(get_translate("invalid_input", user.language))
     except Exception as e:

@@ -4,7 +4,6 @@ from aiogram.filters.callback_data import CallbackData
 
 from core.keyboards.main_menu_kb import MenuCallback
 from core.utils.translations import get_translate
-from core.keyboards.worker_kb import MammothActionCallback
 
 
 def get_wallet_kb(language):
